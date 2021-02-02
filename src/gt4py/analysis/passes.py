@@ -545,11 +545,25 @@ class MultiStageMergingWrapper:
         )
 
     def has_reads_with_offset(self, *, restrict_to: Optional[Set[str]]) -> bool:
-        checked_axes = slice(None) if self.k_offset_extends_domain else slice(None, -1)
+        checked_axes = slice(None, -1) if self.parent.has_sequential_axis else slice(None)
         fields = restrict_to.intersection(self.inputs) if restrict_to else set(self.inputs)
-        return any(
-            self.inputs[name][checked_axes] != Extent.zeros()[checked_axes] for name in fields
-        )
+
+        # Check horizontal axes for read with offset
+        if any(self.inputs[name][checked_axes] != Extent.zeros()[checked_axes] for name in fields):
+            return True
+        elif self.parent.has_sequential_axis:
+            # Check that K axis offset is not counter to the direction of the loop order
+            iteration_order = self._multi_stage.iteration_order
+            for name in fields:
+                field = self.inputs[name]
+                if (
+                    iteration_order == gt_ir.IterationOrder.FORWARD and field.lower_indices[-1] < 0
+                ) or (
+                    iteration_order == gt_ir.IterationOrder.BACKWARD and field.upper_indices[-1] > 1
+                ):
+                    return True
+
+        return False
 
     def read_after_write_fields_in(self, target: "MultiStageMergingWrapper") -> Set[str]:
         previous_writes = set(target.outputs)

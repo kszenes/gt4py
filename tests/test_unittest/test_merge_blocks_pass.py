@@ -430,3 +430,24 @@ def test_split_preordered(merge_blocks_pass: AnalysisPass, ijk_domain: Domain) -
     # second multi stage contain]s statement 2
     assert statement_pos[2].multi_stage == 1
     assert statement_pos[2].statements == 0
+
+
+def test_counter_loop_order_read_inout(
+    merge_blocks_pass: AnalysisPass,
+    ijk_domain: Domain,
+) -> None:
+    transform_data = (
+        TDefinition(name="nomerge_write_inout", domain=ijk_domain, fields=["in", "inout", "out"])
+        .add_blocks(
+            TComputationBlock(order=IterationOrder.FORWARD, start=1, end=0).add_statements(
+                TAssign("out", "inout", (0, 0, -1)),
+            ),
+            TComputationBlock(order=IterationOrder.FORWARD).add_statements(
+                TAssign("inout", "in", (0, 0, 0)),
+            ),
+        )
+        .build_transform()
+    )
+    transform_data = merge_blocks_pass(transform_data)
+    # not allowed to be merged: the result of the computation changes when these are merged.
+    assert len(transform_data.blocks) == 2
