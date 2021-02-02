@@ -559,7 +559,7 @@ class MultiStageMergingWrapper:
                 if (
                     iteration_order == gt_ir.IterationOrder.FORWARD and field.lower_indices[-1] < 0
                 ) or (
-                    iteration_order == gt_ir.IterationOrder.BACKWARD and field.upper_indices[-1] > 1
+                    iteration_order == gt_ir.IterationOrder.BACKWARD and field.upper_indices[-1] > 0
                 ):
                     return True
 
