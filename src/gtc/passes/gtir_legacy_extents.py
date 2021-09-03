@@ -17,7 +17,11 @@ def _iter_assigns(node: gtir.Stencil) -> XIterator[gtir.ParAssignStmt]:
 
 def _ext_from_off(offset: gtir.CartesianOffset) -> Extent:
     return Extent(
-        ((min(offset.i, 0), max(offset.i, 0)), (min(offset.j, 0), max(offset.j, 0)), (0, 0))
+        (
+            (min(offset.i, 0), max(offset.i, 0)),
+            (min(offset.j, 0), max(offset.j, 0)),
+            (min(offset.k, 0), max(offset.k, 0)),
+        )
     )
 
 
