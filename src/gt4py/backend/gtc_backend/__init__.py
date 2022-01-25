@@ -17,6 +17,7 @@
 from .cuda.backend import GTCCudaBackend
 from .dace.backend import GTCDaceBackend
 from .gtcpp.backend import GTCGTCpuIfirstBackend, GTCGTCpuKfirstBackend, GTCGTGpuBackend
+from .jax.backend import GTCJaxBackend
 from .numpy.backend import GTCNumpyBackend
 
 
@@ -27,4 +28,5 @@ __all__ = [
     "GTCGTCpuKfirstBackend",
     "GTCGTGpuBackend",
     "GTCNumpyBackend",
+    "GTCJaxBackend",
 ]
