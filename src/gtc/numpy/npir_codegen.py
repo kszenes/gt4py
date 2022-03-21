@@ -208,7 +208,11 @@ class NpirCodegen(TemplatedGenerator):
     ParamAccess = FormatTemplate("{name}")
 
     def visit_DataType(self, node: common.DataType, **kwargs: Any) -> Union[str, Collection[str]]:
-        return f"np.{node.name.lower()}"
+        # `np.bool` is a deprecated alias for the builtin `bool` or `np.bool_`.
+        if node not in {common.DataType.BOOL}:
+            return f"np.{node.name.lower()}"
+        else:
+            return node.name.lower()
 
     def visit_BuiltInLiteral(
         self, node: common.BuiltInLiteral, **kwargs
