@@ -434,9 +434,6 @@ class CUIRCodegen(codegen.TemplatedGenerator):
         #include <gridtools/stencil/common/extent.hpp>
         #include <gridtools/stencil/gpu/launch_kernel.hpp>
         #include <gridtools/stencil/gpu/tmp_storage_sid.hpp>
-        % if positionals:
-        #include <gridtools/stencil/positional.hpp>
-        % endif
 
         namespace ${name}_impl_{
             using namespace gridtools;
