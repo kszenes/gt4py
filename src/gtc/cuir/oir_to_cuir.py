@@ -23,7 +23,11 @@ from typing_extensions import Protocol
 import eve
 from gtc import common, oir
 from gtc.cuir import cuir
-from gtc.passes.oir_optimizations.utils import compute_horizontal_block_extents, symbol_name_creator
+from gtc.passes.oir_optimizations.utils import (
+    collect_symbol_names,
+    compute_horizontal_block_extents,
+    symbol_name_creator,
+)
 
 
 class SymbolNameCreator(Protocol):
@@ -268,7 +272,7 @@ class OIRToCUIR(eve.NodeTranslator):
 
     def visit_Stencil(self, node: oir.Stencil, **kwargs: Any) -> cuir.Program:
         block_extents = compute_horizontal_block_extents(node)
-        ctx = self.Context(new_symbol_name=symbol_name_creator(set(kwargs["symtable"])))
+        ctx = self.Context(new_symbol_name=symbol_name_creator(collect_symbol_names(node)))
         kernels = self.visit(
             node.vertical_loops,
             ctx=ctx,
